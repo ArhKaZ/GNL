@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: syluiset <syluiset@student42.fr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 14:03:54 by syluiset          #+#    #+#             */
-/*   Updated: 2022/11/25 14:06:49 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/11/28 17:43:20 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdint.h>
 //============================================= FX FROM LIBFT =======================================
 size_t ft_strlen(char const *s)
 {
@@ -186,6 +188,49 @@ void	ft_bzero(void *s, size_t n)
 // 	return(str_return);
 // }
 
+char *save_follow_line(char *str)
+{
+	char	*str_return;
+	static char	*stat_str;
+	char	*temp;
+
+	stat_str = cpy_buff()
+	if (stat_str != NULL && ft_strchr(stat_str, '\n') >= 0)
+	{
+		str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
+		temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
+		free(stat_str);
+		stat_str = ft_strdup(temp);
+		free(temp);
+		return (str_return);
+	}
+	else
+	{
+		str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
+		temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
+		free(stat_str);
+		stat_str = ft_strdup(temp);
+		free(temp);
+		return (str_return);
+	}
+}
+
+char	*cpy_buff(char *buff)
+{
+	char	*stat_str;
+	char	*temp;
+
+	if (stat_str == NULL)
+			stat_str = ft_strdup(buff);
+	else
+	{
+		temp = ft_strdup(stat_str);
+		free(stat_str);
+		stat_str = ft_strjoin(temp, buff);
+		free(temp);
+	}
+	return (stat_str);
+}
 
 char	*get_next_line(int fd)
 {
@@ -198,7 +243,7 @@ char	*get_next_line(int fd)
 	if (fd < 0 || read(fd, buff, 0) || BUFFER_SIZE < 0)
 		return (NULL);
 	str_return = NULL;
-	if (stat_str != NULL && ft_strchr(stat_str, '\n') >= 0 )
+	if (stat_str != NULL && ft_strchr(stat_str, '\n') >= 0)
 	{
 		str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
 		temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
@@ -223,12 +268,11 @@ char	*get_next_line(int fd)
 		if (ft_strchr(stat_str, '\n') >= 0)
 		{
 			str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
-			//printf("%p\n", str_return);
 			temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
 			free(stat_str);
 			stat_str = ft_strdup(temp);
 			free(temp);
-			return (str_return);
+			return (str_return); 
 		}
 		ft_bzero(buff, BUFFER_SIZE);
 		ret = read(fd, buff,BUFFER_SIZE);
