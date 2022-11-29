@@ -6,252 +6,204 @@
 /*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 14:03:54 by syluiset          #+#    #+#             */
-/*   Updated: 2022/11/25 14:06:49 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/11/29 16:34:19 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 #include <stdlib.h>
-//============================================= FX FROM LIBFT =======================================
-size_t ft_strlen(char const *s)
-{
-	int i;
 
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
+char	*ft_save(char *buff)
+{
+	char *stat_char;
+
+	stat_char = NULL;
+	if (ft_strchr(buff, '\n'))
+		stat_char = ft_strdup(ft_strchr(buff, '\n') + 1);
+	return (stat_char);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_get_line(int fd)
 {
-	char	*str;
-	int		i;
-	int		j;
+	char	*str_return;
+	char	buff[BUFFER_SIZE + 1];
+	int		ret;
 
-	i = 0;
-	if (!s1 || !s2)
-		return (NULL);
-	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
-	if (!str)
-		return (0);
-	while (s1[i])
+	str_return = NULL;
+	ret = 1;
+	ft_bzero(buff, BUFFER_SIZE + 1);
+	ret = read(fd, buff, BUFFER_SIZE);
+	if (ret == 0)
+		return NULL;
+	str_return = ft_strdup(buff);
+	while (ret != 0 && (!(ft_strchr(str_return, '\n'))))
 	{
-		str[i] = s1[i];
-		i++;
+		ft_bzero(buff, BUFFER_SIZE + 1);
+		ret = read(fd, buff, BUFFER_SIZE);
+		if (ret == -1)
+			return (NULL);
+		str_return = ft_strjoin(str_return, buff);
+		if (ret < BUFFER_SIZE)
+			break;
 	}
-	j = i;
-	i = 0;
-	while (s2[i])
-	{
-		str[j] = s2[i];
-		i++;
-		j++;
-	}
-	str[j] = '\0';
-	return (str);
-}
-void	*ft_calloc(size_t nmenb, size_t size)
-{
-	void	*ptr;
-	size_t	i;
-
-	i = 0;
-	if (size && nmenb >= SIZE_MAX / size)
-		return (NULL);
-	ptr = malloc(size * nmenb);
-	if (!ptr)
-		return (NULL);
-	while (i < size * nmenb)
-	{
-		((char *)ptr)[i] = 0;
-		i++;
-	}
-	return (ptr);
+	return (str_return);
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_line(char *temp)
 {
-	size_t	i;
-	size_t	len;
-	char	*dup;
+	char	*str_return;
+	int		max;
+	int		len;
 
-	dup = NULL;
-	i = 0;
-	len = ft_strlen(s);
-	dup = malloc(sizeof(char) * len + 1);
-	if (!dup)
-		return (NULL);
-	while (s[i])
+	max = 0;
+	while (temp[max] && temp[max] != '\n')
+		max++;
+	len = ft_strlen()
+	str_return = malloc(sizeof(char) * (max + 2));
+	while (i < max)
 	{
-		dup[i] = (char)s[i];
+		str_return[i] = temp[i];
 		i++;
 	}
-	dup[i] = '\0';
-	return (dup);
+	str_return[i] = '\n';
+	str_return[i + 1] = '\0';
+	free(temp);
+	return (str_return);
 }
-
-char	*ft_substr(char const *s, unsigned int start, size_t len)
-{
-	char	*sub;
-	size_t	i;
-
-	i = -1;
-	sub = NULL;
-	if (!s)
-		return (NULL);
-	if (ft_strlen(s) < start)
-	{
-		sub = ft_calloc(1, sizeof(char));
-		if (!sub)
-			return (0);
-	}
-	else
-	{
-		if (ft_strlen(s + start) < len)
-			sub = ft_calloc((ft_strlen(s + start) + 1), sizeof(char));
-		else
-			sub = ft_calloc((len + 1), sizeof(char));
-		if (!sub)
-			return (0);
-		while (++i < len && s[start] && start + i < ft_strlen(s))
-			sub[i] = s[start + i];
-	}
-	return (sub);
-}
-char	*ft_strcpy_endl(char *s)
-{
-	char	*str;
-	int		i;
-
-	i = 0;
-	str = calloc(ft_strlen(s) + 2, sizeof(char));
-	while (s[i])
-	{
-		str[i] = s[i];
-		i++;
-	}
-	str[i] = '\n';
-	str[i + 1] = '\0';
-	free(s);
-	return (str);
-}
-int	ft_strchr(const char *s, int c)
-{
-	size_t	i;
-	char	ch;
-
-	ch = (char)c;
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == ch)
-			return (i);
-		i++;
-	}
-	if (ch == 0)
-		return (i);
-	return (-1);
-}
-
-void	ft_bzero(void *s, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < n)
-	{
-		*(char *)s = 0;
-		s++;
-		i++;
-	}
-}
-
-//=================================================================================================
-// char	*save_buff(char *str)
-// {
-// 	static char	*stat_str;
-// 	char		*str_return;
-// 	int	max;
-
-// 	max = 0;
-// 	while (str[max] && str[max] != '\n')
-// 	{
-// 		str_return = str[max];
-// 		max++;
-// 	}
-// 	if (str[max] == '\n')
-// 		stat_str = ft_substr(str, max, ft_strlen(str) - max);
-// 	return(str_return);
-// }
 
 
 char	*get_next_line(int fd)
 {
-	char	buff[BUFFER_SIZE];
-	static char	*stat_str;
+	static char	*stat_char;
 	char		*str_return;
-	int			ret;
-	char		*temp;
+	char		 *temp;
 
-	if (fd < 0 || read(fd, buff, 0) || BUFFER_SIZE < 0)
-		return (NULL);
+	temp = NULL;
+	stat_char = NULL;
 	str_return = NULL;
-	if (stat_str != NULL && ft_strchr(stat_str, '\n') >= 0 )
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
+		return (NULL);
+	stat_char = ft_get_line(fd);
+	if (stat_char == NULL)
+		return (NULL);
+	if (ft_strchr(stat_char, '\n'))
 	{
-		str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
-		temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
-		free(stat_str);
-		stat_str = ft_strdup(temp);
-		free(temp);
-		return (str_return);
+		str_return = ft_line(stat_char);
+		stat_char = ft_save(stat_char);
 	}
-	ft_bzero(buff, BUFFER_SIZE);
-	ret = read(fd, buff, BUFFER_SIZE);
-	while (!(ret ==  0))
-	{
-		if (stat_str == NULL)
-			stat_str = ft_strdup(buff);
-		else
-		{
-			temp = ft_strdup(stat_str);
-			free(stat_str);
-			stat_str = ft_strjoin(temp, buff);
-			free(temp);
-		}
-		if (ft_strchr(stat_str, '\n') >= 0)
-		{
-			str_return = ft_substr(stat_str, 0, ft_strchr(stat_str, '\n') + 1);
-			//printf("%p\n", str_return);
-			temp = ft_substr(stat_str, ft_strchr(stat_str, '\n') + 1, ft_strlen(stat_str) - ft_strchr(stat_str, '\n'));
-			free(stat_str);
-			stat_str = ft_strdup(temp);
-			free(temp);
-			return (str_return);
-		}
-		ft_bzero(buff, BUFFER_SIZE);
-		ret = read(fd, buff,BUFFER_SIZE);
-	}
-	return (NULL);
+	return (str_return);
 }
 
-// #include <fcntl.h>
-// int main()
+//==============================================================================
+// char	*ft_save(char *buff)
 // {
-// 	int fd;
-// 	char *path = "bible.txt";
-// 	fd = open(path, O_RDONLY);
-// 	char *line;
-// 	line = get_next_line(fd);
-// 	while (line != NULL)
-// 	{
-// 		printf("%s/%p", line, line);
-// 		free(line);
-// 		line = get_next_line(fd);
-// 	}
-// 	printf("%s", line);
-// 	free(line);
-// 	close(fd);
-// 	return (0);
+// 	char *stat_char;
+
+// 	stat_char = NULL;
+// 	if (ft_strchr(buff, '\n'))
+// 		stat_char = ft_strdup(ft_strchr(buff, '\n') + 1);
+// 	return (stat_char);
 // }
+
+// char	*ft_get_line(int fd)
+// {
+// 	char	*str_return;
+// 	char	buff[BUFFER_SIZE + 1];
+// 	int		ret;
+
+// 	str_return = NULL;
+// 	ret = 1;
+// 	ft_bzero(buff, BUFFER_SIZE + 1);
+// 	ret = read(fd, buff, BUFFER_SIZE);
+// 	if (ret == 0)
+// 		return NULL;
+// 	str_return = ft_strdup(buff);
+// 	while (ret != 0 && (!(ft_strchr(str_return, '\n'))))
+// 	{
+// 		ft_bzero(buff, BUFFER_SIZE + 1);
+// 		ret = read(fd, buff, BUFFER_SIZE);
+// 		if (ret == -1)
+// 			return (NULL);
+// 		str_return = ft_strjoin(str_return, buff);
+// 		if (ret < BUFFER_SIZE)
+// 			break;
+// 	}
+// 	return (str_return);
+// }
+
+// char	*ft_line(char *temp)
+// {
+// 	char	*str_return;
+// 	int		max;
+// 	int		i;
+
+// 	max = 0;
+// 	while (temp[max] && temp[max] != '\n')
+// 		max++;
+// 	i = 0;
+// 	str_return = malloc(sizeof(char) * (max + 2));
+// 	while (i < max)
+// 	{
+// 		str_return[i] = temp[i];
+// 		i++;
+// 	}
+// 	str_return[i] = '\n';
+// 	str_return[i + 1] = '\0';
+// 	free(temp);
+// 	return (str_return);
+// }
+
+
+// char	*get_next_line(int fd)
+// {
+// 	static char	*stat_char;
+// 	char		*str_return;
+// 	char		 *temp;
+
+// 	temp = NULL;
+// 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) == -1)
+// 		return (NULL);
+// 	if (stat_char != NULL)
+// 	{
+// 		temp = ft_strdup(stat_char);
+// 		stat_char = ft_save(stat_char);
+// 		str_return = ft_line(temp);
+// 		if (ft_strchr(str_return, '\n'))
+// 			return (str_return);
+// 		str_return = ft_strjoin(str_return, ft_get_line(fd));
+// 	}
+// 	else
+// 		str_return = ft_get_line(fd);
+// 	if (str_return == NULL)
+// 		return (NULL);
+// 	if (ft_strchr(str_return, '\n'))
+// 	{
+// 		stat_char = ft_save(str_return);
+// 		str_return = ft_line(str_return);
+// 	}
+// 	return (str_return);
+// }
+
+#include <fcntl.h>
+int main(int argc, char **argv)
+{
+	if (argc > 1)
+	{
+		int fd;
+		//char *path = "bible.txt";
+		fd = open(argv[1], O_RDONLY);
+		char *line;
+		line = get_next_line(fd);
+		printf("[%s]", line);
+		line = get_next_line(fd);
+		printf("%s", line);
+		line = get_next_line(fd);
+		printf("%s", line);
+		line = get_next_line(fd);
+		printf("%s", line);
+		free(line);
+		close(fd);
+	}
+	return (0);
+}
