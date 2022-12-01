@@ -3,25 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: syluiset <syluiset@student42.fr>           +#+  +:+       +#+        */
+/*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 12:14:43 by syluiset          #+#    #+#             */
-/*   Updated: 2022/11/30 18:04:41 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/12/01 16:20:28 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 char	*ft_save(char *stat_char)
 {
 	char	*temp;
 
+	if (stat_char == NULL)
+		return (NULL);
 	temp = ft_strdup(stat_char);
 	free(stat_char);
 	if (ft_strchr(temp, '\n'))
 		stat_char = ft_strdup(ft_strchr(temp, '\n') + 1);
+	else
+		stat_char = NULL;
 	free(temp);
 	return (stat_char);
 }
@@ -31,10 +33,16 @@ char	*ft_choice(char *buff, char *str_return)
 	char	*temp;
 
 	if (str_return == NULL)
+	{
 		str_return = ft_strdup(buff);
+		if (str_return == NULL)
+			return (NULL);
+	}
 	else
 	{
 		temp = ft_strjoin(str_return, buff);
+		if (temp == NULL)
+			return (NULL);
 		free(str_return);
 		str_return = ft_strdup(temp);
 		free(temp);
@@ -54,42 +62,52 @@ char	*ft_get_line(int fd, char *stat_char)
 	{
 		ft_bzero(buff, BUFFER_SIZE + 1);
 		ret = read(fd, buff, BUFFER_SIZE);
-		if (ret <= 0)
-			return (NULL);
+		if (ret < 0)
+			return (free(stat_char), stat_char = NULL, NULL);
+		if (ret == 0)
+			break ;
 		cpybuff = ft_strdup(buff);
+		if (cpybuff == NULL)
+			break;
 		stat_char = ft_choice(cpybuff, stat_char);
+		if (stat_char == NULL)
+			break;
 		if (ret < BUFFER_SIZE)
-			break;
+			break ;
 		if (ft_strchr(stat_char, '\n'))
-			break;
+			break ;
 	}
 	return (stat_char);
 }
 
-char	*ft_line(char *temp)
+char	*ft_line(char *stat_char)
 {
 	char	*str_return;
 	int		max;
 
 	max = 0;
-	while (temp[max] && temp[max] != '\n')
+
+	if (stat_char == NULL)
+		return (NULL);
+	while (stat_char[max] && stat_char[max] != '\n')
 		max++;
-	if (ft_strchr(temp, '\n'))
+	if (ft_strchr(stat_char, '\n'))
 	{
 		str_return = malloc(sizeof(char) * (max + 2));
+		if (!str_return)
+			return (NULL);
 		str_return[max] = '\n';
 		str_return[max + 1] = '\0';
 	}
 	else
 	{
 		str_return = malloc(sizeof(char) * (max + 1));
+		if (!str_return)
+			return (NULL);
 		str_return[max] = '\0';
 	}
-	while (max > 0)
-	{
-		str_return[max - 1] = temp[max - 1];
-		max--;
-	}
+	while (--max >= 0)
+		str_return[max] = stat_char[max];
 	return (str_return);
 }
 
@@ -100,38 +118,11 @@ char	*get_next_line(int fd)
 
 	final_str = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (NULL);
+		return (free(stat_char), stat_char = NULL, NULL);
 	stat_char = ft_get_line(fd, stat_char);
-	if (stat_char == NULL)
-	{
-		free(stat_char);
-		return (NULL);
-	}
+	if (stat_char == NULL || stat_char[0] == '\0')
+		return (free(stat_char), stat_char = NULL, NULL);
 	final_str = ft_line(stat_char);
-	if (ft_strchr(stat_char, '\n'))
-		stat_char = ft_save(stat_char);
+	stat_char = ft_save(stat_char);
 	return (final_str);
-}
-
-#include <fcntl.h>
-int main(int argc, char **argv)
-{
-	if (argc > 1)
-	{
-		int fd;
-		//char *path = "bible.txt";
-		fd = open(argv[1], O_RDONLY);
-		char *line;
-		line = get_next_line(fd);
-		printf("[%s]", line);
-		free(line);
-		line = get_next_line(fd);
-		printf("[%s]", line);
-		free(line);
-		line = get_next_line(fd);
-		printf("[%s]", line);
-		free(line);
-		close(fd);
-	}
-	return (0);
 }

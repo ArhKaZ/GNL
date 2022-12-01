@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: syluiset <syluiset@student42.fr>           +#+  +:+       +#+        */
+/*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 14:03:56 by syluiset          #+#    #+#             */
-/*   Updated: 2022/11/30 13:50:59 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/12/01 14:34:28 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t ft_strlen(char const *s)
+size_t	ft_strlen(char const *s)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s[i])
@@ -69,7 +69,6 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-#include <stdio.h>
 char	*ft_strdup(const char *s)
 {
 	size_t	i;
