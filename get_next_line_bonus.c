@@ -6,7 +6,7 @@
 /*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 14:48:54 by syluiset          #+#    #+#             */
-/*   Updated: 2022/12/01 15:42:33 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/12/02 11:48:16 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	*ft_save(char *stat_char)
 {
 	char	*temp;
 
+	if (stat_char == NULL)
+		return (NULL);
 	temp = ft_strdup(stat_char);
 	free(stat_char);
 	if (ft_strchr(temp, '\n'))
@@ -36,6 +38,8 @@ char	*ft_choice(char *buff, char *str_return)
 	{
 		temp = ft_strjoin(str_return, buff);
 		free(str_return);
+		if (temp == NULL)
+			return (NULL);
 		str_return = ft_strdup(temp);
 		free(temp);
 	}
@@ -60,6 +64,8 @@ char	*ft_get_line(int fd, char *stat_char)
 			break ;
 		cpybuff = ft_strdup(buff);
 		stat_char = ft_choice(cpybuff, stat_char);
+		if (stat_char == NULL)
+			break ;
 		if (ret < BUFFER_SIZE)
 			break ;
 		if (ft_strchr(stat_char, '\n'))
@@ -95,7 +101,7 @@ char	*ft_line(char *stat_char)
 		str_return[max] = stat_char[max];
 	return (str_return);
 }
-#include <stdio.h>
+
 char	*get_next_line(int fd)
 {
 	static char	*stat_char[OPEN_MAX];

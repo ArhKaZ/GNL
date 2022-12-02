@@ -6,7 +6,7 @@
 /*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/30 12:14:43 by syluiset          #+#    #+#             */
-/*   Updated: 2022/12/01 16:20:28 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/12/02 11:47:10 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,13 @@ char	*ft_choice(char *buff, char *str_return)
 	char	*temp;
 
 	if (str_return == NULL)
-	{
 		str_return = ft_strdup(buff);
-		if (str_return == NULL)
-			return (NULL);
-	}
 	else
 	{
 		temp = ft_strjoin(str_return, buff);
+		free(str_return);
 		if (temp == NULL)
 			return (NULL);
-		free(str_return);
 		str_return = ft_strdup(temp);
 		free(temp);
 	}
@@ -67,11 +63,9 @@ char	*ft_get_line(int fd, char *stat_char)
 		if (ret == 0)
 			break ;
 		cpybuff = ft_strdup(buff);
-		if (cpybuff == NULL)
-			break;
 		stat_char = ft_choice(cpybuff, stat_char);
 		if (stat_char == NULL)
-			break;
+			break ;
 		if (ret < BUFFER_SIZE)
 			break ;
 		if (ft_strchr(stat_char, '\n'))
@@ -86,9 +80,6 @@ char	*ft_line(char *stat_char)
 	int		max;
 
 	max = 0;
-
-	if (stat_char == NULL)
-		return (NULL);
 	while (stat_char[max] && stat_char[max] != '\n')
 		max++;
 	if (ft_strchr(stat_char, '\n'))

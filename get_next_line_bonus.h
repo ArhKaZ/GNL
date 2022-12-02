@@ -6,16 +6,16 @@
 /*   By: syluiset <syluiset@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 14:49:10 by syluiset          #+#    #+#             */
-/*   Updated: 2022/12/01 15:13:12 by syluiset         ###   ########.fr       */
+/*   Updated: 2022/12/02 11:44:50 by syluiset         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
-#include <sys/syslimits.h>
+# include <sys/syslimits.h>
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 30
 # endif
